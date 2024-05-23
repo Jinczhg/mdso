@@ -18,6 +18,7 @@ find_package(gflags REQUIRED)
 find_package(Glog REQUIRED)
 find_package(Ceres REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(fmt REQUIRED)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/googletest)
 
@@ -151,6 +152,7 @@ target_include_directories(dso
 
 target_link_libraries(dso 
   PUBLIC
+        fmt
     stdc++fs
     ${OpenCV_LIBS}
     ${GLOG_LIBRARIES}

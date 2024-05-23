@@ -1,5 +1,7 @@
 #include "output/CloudWriter.h"
 
+#define MAX_DEPTH 100
+
 namespace fishdso {
 
 CloudWriter::CloudWriter(CameraModel *cam, const std::string &outputDirectory,
@@ -14,17 +16,23 @@ void CloudWriter::keyFramesMarginalized(
     std::vector<cv::Vec3b> colors;
 
     for (const auto &op : kf->optimizedPoints) {
-      points.push_back(kf->thisToWorld *
-                       (op->depth() * cam->unmap(op->p).normalized()));
-      colors.push_back(
-          kf->preKeyFrame->frameColored.at<cv::Vec3b>(toCvPoint(op->p)));
+      Vec3 worldPoint = kf->thisToWorld *
+                        (op->depth() * cam->unmap(op->p).normalized());
+      if (worldPoint[2] < MAX_DEPTH) { // MAX_DEPTH
+        points.push_back(worldPoint);
+        colors.push_back(
+            kf->preKeyFrame->frameColored.at<cv::Vec3b>(toCvPoint(op->p)));
+      }
     }
     for (const auto &ip : kf->immaturePoints) {
       if (ip->numTraced > 0) {
-        points.push_back(kf->thisToWorld *
-                         (ip->depth * cam->unmap(ip->p).normalized()));
-        colors.push_back(
-            kf->preKeyFrame->frameColored.at<cv::Vec3b>(toCvPoint(ip->p)));
+        Vec3 worldPoint = kf->thisToWorld *
+                          (ip->depth * cam->unmap(ip->p).normalized());
+        if (worldPoint[2] < MAX_DEPTH) { // MAX_DEPTH
+          points.push_back(worldPoint);
+          colors.push_back(
+              kf->preKeyFrame->frameColored.at<cv::Vec3b>(toCvPoint(ip->p)));
+        }
       }
     }
 

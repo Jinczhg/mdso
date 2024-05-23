@@ -134,13 +134,17 @@ It should contain "info" and "data" subdirectories.)abacaba";
     std::vector<cv::Vec3b> allColors;
     allPoints.reserve(FLAGS_gt_points);
     allColors.reserve(FLAGS_gt_points);
-    for (int i = 0; i < pointsInFrameGT.size(); ++i)
+    for (int i = 0; i < pointsInFrameGT.size(); ++i) {
       for (int j = 0; j < pointsInFrameGT[i].size(); ++j) {
         const Vec3 &p = pointsInFrameGT[i][j];
         allPoints.push_back(reader.getWorldToFrameGT(i).inverse() * p);
         allColors.push_back(colors[i][j]);
       }
-    std::ofstream pointsGTOfs("pointsGT.ply");
+    }
+    // PLY
+//    std::ofstream pointsGTOfs("pointsGT.ply");
+    // PCD
+    std::ofstream pointsGTOfs("pointsGT.pcd");
     printInPly(pointsGTOfs, allPoints, allColors);
     return 0;
   }
@@ -157,16 +161,24 @@ It should contain "info" and "data" subdirectories.)abacaba";
   TrajectoryWriterGT trajectoryWriterGT(reader.getAllWorldToFrameGT(), outDir,
                                         "ground_truth_pos.txt",
                                         "matrix_form_GT_pose.txt");
-  CloudWriter cloudWriter(reader.cam.get(), outDir, "points.ply");
+  // PLY
+//  CloudWriter cloudWriter(reader.cam.get(), outDir, "points.ply");
+  // PCD
+  CloudWriter cloudWriter(reader.cam.get(), outDir, "pointCloud_mdso.pcd");
 
   std::unique_ptr<CloudWriterGT> cloudWriterGTPtr;
   if (FLAGS_gen_gt) {
     std::vector<std::vector<Vec3>> pointsInFrameGT(reader.getFrameCount());
     std::vector<std::vector<cv::Vec3b>> colors(reader.getFrameCount());
     readPointsInFrameGT(reader, pointsInFrameGT, colors, FLAGS_gt_points);
+    // PLY
+//    cloudWriterGTPtr.reset(new CloudWriterGT(reader.getAllWorldToFrameGT(),
+//                                             pointsInFrameGT, colors, outDir,
+//                                             "pointsGT.ply"));
+    // PCD
     cloudWriterGTPtr.reset(new CloudWriterGT(reader.getAllWorldToFrameGT(),
                                              pointsInFrameGT, colors, outDir,
-                                             "pointsGT.ply"));
+                                             "pointsGT.pcd"));
   }
 
   InterpolationDrawer interpolationDrawer(reader.cam.get());

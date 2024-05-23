@@ -59,8 +59,8 @@ def draw_arrowed(axes, motions, color, label):
     dir_vects = np.array([mot[1][2, :] for mot in motions])
 
     axes.quiver(centers[:, 0], centers[:, 1], centers[:, 2],
-              dir_vects[:, 0], dir_vects[:, 1], dir_vects[:, 2], 
-                color=color, normalize=True, arrow_length_ratio=0.2, 
+                dir_vects[:, 0], dir_vects[:, 1], dir_vects[:, 2],
+                color=color, normalize=True, arrow_length_ratio=0.2,
                 length=arr_len, label=label)
 
 def draw_track(axes, motions, color, label):
@@ -68,8 +68,8 @@ def draw_track(axes, motions, color, label):
     axes.plot(centers[:, 0], centers[:, 1], centers[:, 2], color=color, label=label)
 
 def select(indexed, first, last):
-    return [val for (ind, val) in indexed 
-                  if ind >= first and ind <= last]
+    return [val for (ind, val) in indexed
+            if ind >= first and ind <= last]
 
 
 parser = argparse.ArgumentParser()
@@ -77,11 +77,11 @@ parser.add_argument("dir", help="DSO output directory")
 parser.add_argument("-r", "--russian", help="use russian legend",
                     action="store_true")
 parser.add_argument("-q", "--quiver", help="plot camera directions"
-                    " (if not specified, only draw position curve)", 
+                                           " (if not specified, only draw position curve)",
                     action="store_true")
-parser.add_argument("-f", "--first", help="truncate frames with nums less than this", 
+parser.add_argument("-f", "--first", help="truncate frames with nums less than this",
                     type=int)
-parser.add_argument("-l", "--last", help="truncate frames with nums bigger than this", 
+parser.add_argument("-l", "--last", help="truncate frames with nums bigger than this",
                     type=int)
 args = parser.parse_args()
 
@@ -114,7 +114,7 @@ else:
     print('no ground truth provided')
 
 first = 0 if args.first is None else args.first
-last = np.inf if args.last is None else args.last;
+last = np.inf if args.last is None else args.last
 
 print(f'f={first} l={last}')
 print(f'act elem={actual[0]}')
@@ -130,7 +130,7 @@ if has_ground_truth:
 
 
 fig = plt.figure()
-ax = Axes3D(fig)
+ax = plt.axes(projection='3d')#Axes3D(fig)
 ax.set_aspect('equal')
 
 ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
@@ -156,7 +156,7 @@ else:
 
 draw_proc(ax, actual, 'orange', label_ours)
 #  if has_predicted:
-    #  draw_motions(ax, predicted, 'blue', 'предсказанная траектория')
+#  draw_motions(ax, predicted, 'blue', 'предсказанная траектория')
 if has_ground_truth:
     draw_proc(ax, ground_truth, 'green', label_prec)
 elif has_stereo_matched:
